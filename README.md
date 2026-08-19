@@ -13,10 +13,37 @@ A Spring Boot project demonstrating two authentication strategies built on the s
 ## Status
 🚧 In Progress
 
+## Features
+- Session-based authentication (Spring Security default)
+- Email verification flow — accounts disabled until verified
+
+## Endpoints
+
+| Method | Endpoint                   | Description |
+|--------|----------------------------|---|
+| POST   | `/register`                | Register a new user |
+| POST   | `/verifyRegistrationToken` | Verify user email via token |
+| POST   | `/signin`                  | Authenticate and receive session/JWT |
+
+## Design
+
+### Flow — Registration to Login
+
+1. User registers → persisted with `isEnabled = false`
+2. `VerificationToken` created and mapped to user
+3. User verifies via `verifyRegistrationToken` endpoint
+4. On success — `isEnabled` set to `true`, token row deleted
+5. User can now log in via session or JWT-based authentication
+6. Role-based access enforced on protected endpoints
+
+### Email Verification Flow
+1. User registers → persisted with `isEnabled = false`
+2. A `VerificationToken` entity is created, mapping the user to a unique token
+3. User verifies via `verifyRegistrationToken` endpoint
+4. On success — `isEnabled` set to `true`, and the `VerificationToken` row is deleted
+5. Prevents unverified accounts from logging in while keeping the token table clean post-verification
+
 ## Planned Features
-- [ ] User registration
-- [ ] Email verification flow
-- [ ] Session-based authentication
 - [ ] JWT token-based authentication
 - [ ] Role-based access control (RBAC)
 
@@ -26,6 +53,17 @@ A Spring Boot project demonstrating two authentication strategies built on the s
 **Entity Layer**
 - `User` — core entity with `isEnabled` and `role` fields
 - `VerificationToken` — maps users to email verification tokens, deleted post-verification
+
+**Controller Layer**
+- Exposes REST endpoints for registration, verification, and signin
+- Delegates all business logic to the service layer — no logic lives in controllers
+
+**Service Layer**
+- Registration, verification, and authentication logic
+- Password encoding via `BCryptPasswordEncoder`
+
+**Repository Layer**
+- Spring Data JPA repositories for `User` and `VerificationToken`
 
 ## Getting Started
 
