@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.Optional;
 
 @Service
-public class UserService implements UserDetailsService {
+public class  UserService implements UserDetailsService {
     @Autowired
     private UserRepository _userRepository;
 

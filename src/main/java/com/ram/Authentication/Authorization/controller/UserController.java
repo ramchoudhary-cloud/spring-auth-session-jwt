@@ -7,6 +7,7 @@ import com.ram.Authentication.Authorization.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -40,6 +41,7 @@ public class UserController {
     }
 
     @GetMapping("/hello")
+    @PreAuthorize("hasRole('admin, user')")
     public String hello(){
         return "hello ram";
     }
